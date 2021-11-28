@@ -50,14 +50,14 @@ For handler user, understanding just X classes is enough; *X* & *Y* & *Z*.
 
 ### Full API list
 All handlers 
-<!-- - `speechcorpusy.presets`
-  - LJSpeech/`LJ`, ZeroSpeech2019/`ZR19`, JVS/`JVS`, and others coming soon!
-- [`speechcorpusy.interface.AbstractCorpus`](https://github.com/tarepan/speechcorpusy/blob/main/speechcorpusy/interface.py): the interface
-- `speechcorpusy.helper`
-  - [`.contents.get_contents`](https://github.com/tarepan/speechcorpusy/blob/main/speechcorpusy/helper/contents.py): Corpus contents acquisition (private local/S3/GDrive/etc & hook for origin)
-  - [`.forward`](https://github.com/tarepan/speechcorpusy/blob/main/speechcorpusy/helper/forward.py)
-    - `.forward`: Forward a corpus archive from origin to any adress for download or mirroring
-    - `.forward_from_GDrive`: Forward from GoogleDrive to any adress for corpus copy -->
+- `speechdatasety.helper`
+  - `.adress`
+    - `dataset_adress`: Get path of dataset archive file and contents directory
+    - `generate_path_getter`: Generate getter of dataset's datum path
+  - `.archive`
+    - `hash_args`
+    - `try_to_acquire_archive_contents`
+    - `save_archive`
 
 <!-- Of course, the value of `ItemID`'s `subtype`/`speaker`/`name` differ corpus by corpus.  
 Currently, please check these values in each preset codes.   -->
