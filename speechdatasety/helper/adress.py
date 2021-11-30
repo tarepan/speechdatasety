@@ -43,7 +43,7 @@ def dataset_adress(
     rel_dataset = f"datasets/{corpus_name}/{dataset_type}"
     archive_file = f"{archive_root}/{rel_dataset}/archive/{preprocess_args}.zip"
     contents_dir = f"{contents_root}/{rel_dataset}/contents/{preprocess_args}"
-    return archive_file, contents_dir
+    return archive_file, Path(contents_dir)
 
 
 def generate_path_getter(data_name: str, dir_dataset: Path):
