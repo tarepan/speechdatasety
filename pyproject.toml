@@ -11,6 +11,7 @@ repository = "https://github.com/tarepan/speechdatasety"
 [tool.poetry.dependencies]
 python = "^3.7"
 speechcorpusy = {git = "https://github.com/tarepan/speechcorpusy.git", rev = "main"}
+omegaconf = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
 
