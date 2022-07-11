@@ -23,6 +23,10 @@ FROM mcr.microsoft.com/vscode/devcontainers/python:3.7
 #     && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
+# PyTorch on CPU
+RUN pip3 --disable-pip-version-check --no-cache-dir install numpy==1.21.6
+RUN pip3 --disable-pip-version-check --no-cache-dir install torch==1.11.0+cpu torchaudio==0.11.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
 # package dependency manager `poetry` without environment isolation (It is a job of Docker.)
 ENV POETRY_VIRTUALENVS_CREATE=false
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
