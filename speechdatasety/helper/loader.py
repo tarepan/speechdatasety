@@ -1,6 +1,6 @@
 """DataLoader generator"""
 
-from typing import Optional
+from typing import Optional, TypeVar
 from dataclasses import dataclass
 from os import cpu_count
 
@@ -8,6 +8,10 @@ from omegaconf import MISSING
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 
+
+S = TypeVar("S")
+T = TypeVar("T")
+U = TypeVar("U")
 
 @dataclass
 class ConfLoader:
@@ -38,7 +42,7 @@ class LoaderGenerator:
         self._num_workers = conf.num_workers
         self._pin_memory = conf.pin_memory if conf.pin_memory is not None else True
 
-    def train(self, dataset: Dataset) -> DataLoader:
+    def train(self, dataset: Dataset[S]) -> DataLoader[S]:
         """Generate training dataloader."""
 
         has_col = hasattr(dataset, "collate_fn")
@@ -51,7 +55,7 @@ class LoaderGenerator:
             collate_fn=dataset.collate_fn if has_col else None,
         )
 
-    def val(self, dataset: Dataset) -> DataLoader:
+    def val(self, dataset: Dataset[T]) -> DataLoader[T]:
         """Generate validation dataloader."""
 
         has_col = hasattr(dataset, "collate_fn")
@@ -64,7 +68,7 @@ class LoaderGenerator:
             collate_fn=dataset.collate_fn if has_col else None,
         )
 
-    def test(self, dataset: Dataset) -> DataLoader:
+    def test(self, dataset: Dataset[U]) -> DataLoader[U]:
         """Generate test dataloader."""
 
         has_col = hasattr(dataset, "collate_fn")
@@ -76,3 +80,39 @@ class LoaderGenerator:
             pin_memory=self._pin_memory,
             collate_fn=dataset.collate_fn if has_col else None,
         )
+
+
+def generate_loader(dataset: Dataset[T], conf: ConfLoader, mode: str) -> DataLoader[T]:
+    """Generate the PyTorch data loader from the dataset and configs.
+    Args:
+        dataset - Dataset which will be wrapped by the loader
+        conf - The configurations
+        mode :: 'train'|'val'|'test' - Loader mode
+    """
+
+    assert mode in ("train", "val", "test"), f"`mode` should be either train/val/test, but {mode}"
+
+    # The number of workers
+    num_workers = conf.num_workers
+    if num_workers is None:
+        n_cpu = cpu_count()
+        num_workers = n_cpu if n_cpu is not None else 0
+
+    # Whether to pin memory
+    pin_memory = conf.pin_memory if conf.pin_memory is not None else True
+
+    # Wether use dataset-specific collate_fn or default one
+    collate_fn = dataset.collate_fn if hasattr(dataset, "collate_fn") else None
+
+    # Mode switching
+    batch_size = conf.batch_size_train if mode == "train" else conf.batch_size_val if mode == "val" else conf.batch_size_test
+    shuffle    = True                  if mode == "train" else False
+
+    return DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        pin_memory=pin_memory,
+        collate_fn=collate_fn,
+    )
