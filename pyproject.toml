@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "speechdatasety"
-version = "0.2.0"
+version = "0.3.0"
 description = "speechdatasety - Python dataset handler & infrastructure"
 authors = ["Tarepan"]
 license = "MIT"
@@ -14,7 +14,14 @@ speechcorpusy = {git = "https://github.com/tarepan/speechcorpusy.git", rev = "ma
 omegaconf = "^2.1.0"
 
 [tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.messages_control]
+disable = [
+  # This is opinionated
+  "line-too-long",
+]
