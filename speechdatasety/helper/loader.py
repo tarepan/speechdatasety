@@ -23,12 +23,14 @@ class ConfLoader:
         batch_size_test:  Number of datum in a test       batch
         num_workers: Number of data loader worker
         pin_memory: Whether to use data loader pin_memory
+        drop_last: Whether to drop last (chipping) batch
     """
     batch_size_train: int = MISSING
     batch_size_val: int = MISSING
     batch_size_test: int = MISSING
     num_workers: Optional[int] = None
     pin_memory: Optional[bool] = None
+    drop_last: bool = False
 
 class LoaderGenerator:
     """Generator of PyTorch data loaders.
@@ -41,6 +43,7 @@ class LoaderGenerator:
             conf.num_workers = n_cpu if n_cpu is not None else 0
         self._num_workers = conf.num_workers
         self._pin_memory = conf.pin_memory if conf.pin_memory is not None else True
+        self._drop_last = conf.drop_last
 
     def train(self, dataset: Dataset[S]) -> DataLoader[S]:
         """Generate training dataloader."""
@@ -53,6 +56,7 @@ class LoaderGenerator:
             num_workers=self._num_workers,
             pin_memory=self._pin_memory,
             collate_fn=dataset.collate_fn if has_col else None,
+            drop_last=self._drop_last,
         )
 
     def val(self, dataset: Dataset[T]) -> DataLoader[T]:
@@ -66,6 +70,7 @@ class LoaderGenerator:
             num_workers=self._num_workers,
             pin_memory=self._pin_memory,
             collate_fn=dataset.collate_fn if has_col else None,
+            drop_last=self._drop_last,
         )
 
     def test(self, dataset: Dataset[U]) -> DataLoader[U]:
@@ -79,6 +84,7 @@ class LoaderGenerator:
             num_workers=self._num_workers,
             pin_memory=self._pin_memory,
             collate_fn=dataset.collate_fn if has_col else None,
+            drop_last=self._drop_last,
         )
 
 
@@ -115,4 +121,5 @@ def generate_loader(dataset: Dataset[T], conf: ConfLoader, mode: str) -> DataLoa
         num_workers=num_workers,
         pin_memory=pin_memory,
         collate_fn=collate_fn,
+        drop_last=conf.drop_last,
     )
