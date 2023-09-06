@@ -51,6 +51,6 @@ def generate_path_getter(data_name: str, dir_dataset: Path):
 
     def path_getter(item_id: ItemId) -> Path:
         file_name = f"{item_id.name}.{data_name}.pt"
-        return dir_dataset / f"{item_id.speaker}" / f"{data_name}s" / file_name
+        return dir_dataset / f"{item_id.corpus}" / f"{item_id.speaker}" / f"{data_name}s" / file_name
 
     return path_getter
