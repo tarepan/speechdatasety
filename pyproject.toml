@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "speechdatasety"
-version = "0.5.0"
+version = "1.0.0"
 description = "speechdatasety - Python dataset handler & infrastructure"
 authors = ["Tarepan"]
 license = "MIT"
@@ -24,4 +24,5 @@ build-backend = "poetry.core.masonry.api"
 disable = [
   # This is opinionated
   "line-too-long",
+  "no-member",
 ]
