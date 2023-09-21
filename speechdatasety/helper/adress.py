@@ -4,7 +4,7 @@
 from typing import Optional, Tuple
 from pathlib import Path
 
-from speechcorpusy.interface import ItemId
+from speechcorpusy.interface import ItemId # pyright: ignore[reportMissingTypeStubs]
 
 
 def dataset_adress(

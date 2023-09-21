@@ -45,8 +45,8 @@ def test_generate_saver_loader(tmp_path: Path):
     hoge_fuga_reloaded = load(item_id)
 
     # File existance
-    assert (tmp_path / speaker / f"{name_hoge}s" / f"{uttr}.{name_hoge}.pt").exists(), f"{name_hoge} not exists."
-    assert (tmp_path / speaker / f"{name_fuga}s" / f"{uttr}.{name_fuga}.pt").exists(), f"{name_fuga} not exists."
+    assert (tmp_path / corpus / speaker / f"{name_hoge}s" / f"{uttr}.{name_hoge}.pt").exists(), f"{name_hoge} not exists."
+    assert (tmp_path / corpus / speaker / f"{name_fuga}s" / f"{uttr}.{name_fuga}.pt").exists(), f"{name_fuga} not exists."
 
     # Value euqality
     assert torch.equal(hoge_fuga[0], hoge_fuga_reloaded[0]), f"{hoge_fuga[0]} != {hoge_fuga_reloaded[0]}"

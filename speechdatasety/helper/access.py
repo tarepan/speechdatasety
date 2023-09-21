@@ -12,12 +12,12 @@ from ..interface.speechcorpusy import ItemId # pyright: ignore [reportMissingTyp
 def save_pt(path: Path, obj: Any) -> None:
     """Save item to the path."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(obj, path)
+    torch.save(obj, path) # pyright: ignore[reportUnknownMemberType]
 
 
 def load_pt(path: Path) -> Any:
     """Load item in the path."""
-    return torch.load(path)
+    return torch.load(path) # pyright: ignore[reportUnknownMemberType]
 
 
 NTuple = Union[
