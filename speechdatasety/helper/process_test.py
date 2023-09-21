@@ -1,8 +1,9 @@
 """Test processings."""
 
 import numpy as np
+import torch
 
-from .process import s16scale, s16min, s16max, unit_to_s16pcm
+from .process import s16scale, s16min, s16max, unit_to_s16pcm, match_length, clip_segment
 
 
 def test_constants():
@@ -39,3 +40,68 @@ def test_unit_to_s16pcm():
     # Clipping
     assert unit_to_s16pcm(i_too_sml)[0] == -32768
     assert unit_to_s16pcm(i_too_big)[0] == +32767
+
+
+def test_match_length_no_min():
+    """Test `match_length` without minimal length constraint."""
+
+    ipt: list[tuple[torch.Tensor, int]] = [
+        #             |        unit#0         |        unit#1         |  tail 
+        (torch.tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, ]), 1),
+        (torch.tensor([ 0,      2,      4,      6,      8,     10,     12,     ]), 2),
+        (torch.tensor([ 0,          3,          6,          9,         12,     ]), 3),
+    ]
+    gt = [
+         torch.tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,]),
+         torch.tensor([ 0,      2,      4,      6,      8,     10,    ]),
+         torch.tensor([ 0,          3,          6,          9,        ]),
+    ]
+
+    opt = match_length(ipt, 1)
+
+    for gt_i, opt_i in zip(gt, opt):
+        assert torch.equal(gt_i, opt_i)
+
+
+def test_match_length_min_length():
+    """Test `match_length` without minimal length constraint."""
+
+    ipt: list[tuple[torch.Tensor, int]] = [
+        #             |        unit#0         |  tail 
+        (torch.tensor([ 0,  1,  2,  3,  4,  5, 12, 13, ]), 1),
+        (torch.tensor([ 0,      2,      4,     12,     ]), 2),
+        (torch.tensor([ 0,          3,         12,     ]), 3),
+    ]
+    gt = [
+        #             |        unit#0         |       unit#0 x2       |
+         torch.tensor([ 0,  1,  2,  3,  4,  5,  0,  1,  2,  3,  4,  5,]),
+         torch.tensor([ 0,      2,      4,      0,      2,      4,    ]),
+         torch.tensor([ 0,          3,          0,          3,        ]),
+    ]
+
+
+    opt = match_length(ipt, 7)
+
+    for gt_i, opt_i in zip(gt, opt):
+        assert torch.equal(gt_i, opt_i)
+
+
+def test_clip_segment():
+    """Test `clip_segment`."""
+
+    ipt: list[tuple[torch.Tensor, int]] = [
+        #             |        unit#0         |        unit#1         |  tail 
+        (torch.tensor([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, ]), 1),
+        (torch.tensor([ 0,      2,      4,      6,      8,     10,     12,     ]), 2),
+        (torch.tensor([ 0,          3,          6,          9,         12,     ]), 3),
+    ]
+    gt = [
+         torch.tensor([                         6,  7,  8,  9, 10, 11,]),
+         torch.tensor([                         6,      8,     10,    ]),
+         torch.tensor([                         6,          9,        ]),
+    ]
+
+    opt = clip_segment(ipt, 6, 6)
+
+    for gt_i, opt_i in zip(gt, opt):
+        assert torch.equal(gt_i, opt_i)
